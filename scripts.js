@@ -1,55 +1,88 @@
-const choices = ["rock", "paper", "scissors"];
-let humanScore = 0;
+const rock = document.getElementById("rock_btn");
+const paper = document.getElementById("paper_btn");
+const scissors = document.getElementById("scissors_btn");
+const gameContent = document.querySelector(".game_content");
+const player = document.getElementById("player_score");
+const computer = document.getElementById("computer_score");
+const rounds = document.querySelector(".rounds h2");
+const winner = document.querySelector(".winner h3");
+const computerImages = document.querySelector(".computer_img");
+
+let playerScore = 0;
 let computerScore = 0;
 
-function getComputerChoice() {
-  let randomChoice = Math.floor(Math.random() * 3) + 1;
-  let computerChoice = choices[randomChoice];
-  return computerChoice;
-}
+rock.addEventListener("click", (e) => {
+  playRound("rock");
+});
 
-function getHumanChoice() {
-  let promptCon = true;
-  let humanChoice;
-  while (promptCon) {
-    humanChoice = prompt("ROCK, PAPER, SCISSORS").toLowerCase();
-    if (choices.includes(humanChoice)) {
-      promptCon = false;
+paper.addEventListener("click", (e) => {
+  playRound("paper");
+});
+
+scissors.addEventListener("click", (e) => {
+  playRound("scissors");
+});
+
+function playRound(playerSelection) {
+  const choices = ["rock", "paper", "scissors"];
+  const computerSelection = choices[Math.floor(Math.random() * 3)];
+  computerImages.src = `./images/${computerSelection}.svg`;
+  computerImages.parentNode.style.display = "block";
+  console.log(`Computer selected ${computerSelection}`);
+
+  if (playerSelection === "rock") {
+    if (computerSelection === "rock") {
+      console.log("Draw");
+      winner.textContent = "Round Draw";
+    } else if (computerSelection === "paper") {
+      console.log("Computer won");
+      winner.textContent = "Computer won this round. Paper beats rock.";
+      computerScore++;
+    } else if (computerSelection === "scissors") {
+      console.log("Player won");
+      winner.textContent = "Player won this round. Rock beats scissors.";
+      playerScore++;
+    }
+  } else if (playerSelection === "paper") {
+    if (computerSelection === "rock") {
+      console.log("Player won");
+      winner.textContent = "Player won this round. Paper beats rock.";
+      playerScore++;
+    } else if (computerSelection === "paper") {
+      console.log("Draw");
+      winner.textContent = "Round Draw";
+    } else if (computerSelection === "scissors") {
+      console.log("Computer won");
+      winner.textContent = "Computer won this round. Scissors beats paper.";
+      computerScore++;
+    }
+  } else if (playerSelection === "scissors") {
+    if (computerSelection === "rock") {
+      console.log("Computer won");
+      winner.textContent = "Computer won this round. Rock beats scissors";
+      computerScore++;
+    } else if (computerSelection === "paper") {
+      console.log("player won");
+      playerScore++;
+      winner.textContent = "Player won this round. Scissors beats paper";
+    } else if (computerSelection === "scissors") {
+      console.log("Draw");
+      winner.textContent = "Round Draw";
     }
   }
-  return humanChoice;
-}
-
-function playRound(humanChoice, computerChoice) {
-  switch ((humanChoice, computerChoice)) {
-    case humanChoice == computerChoice:
-      console.log("Same choice. Zero score");
-      break;
-    case ("rock", "paper"):
-    case ("paper", "scissors"):
-    case ("scissors", "rock"):
-      computerScore++;
-      console.log(`You lose! ${computerChoice} beats ${humanChoice}`);
-      break;
-    default:
-      humanScore++;
-      console.log(`You won! ${humanChoice} beats ${computerChoice}`);
+  rounds.textContent = `Round ${playerScore + computerScore}`;
+  if (playerScore >= 3) {
+    rounds.textContent = "Player won!";
+    playerScore = 0;
+    computerScore = 0;
+    computerImages.parentNode.style.display = "none";
+  } else if (computerScore >= 3) {
+    rounds.textContent = "Computer won!";
+    playerScore = 0;
+    computerScore = 0;
+    computerImages.parentNode.style.display = "none";
   }
-  console.log(`human: ${humanScore}, computer: ${computerScore}`);
+  // Update scores
+  player.textContent = `${playerScore}`;
+  computer.textContent = `${computerScore}`;
 }
-
-function playGame(rounds) {
-  for (let i = 0; i < rounds; i++) {
-    let humanSelection = getHumanChoice();
-    let computerSelection = getComputerChoice();
-    playRound(humanSelection, computerSelection);
-  }
-
-  if (humanScore >= computerScore) {
-    console.log("You won the whole game");
-  } else {
-    console.log("You lost to the computer");
-  }
-}
-
-playGame(5);
